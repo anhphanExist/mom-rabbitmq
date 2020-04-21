@@ -12,10 +12,10 @@ Hướng dẫn:
 Kết quả:
 - Server
 <div align="center">
-  <img src="https://github.com/datluu-dev/mom-rabbitmq/blob/master/image/server.pngraw=true">
+  <img src="https://github.com/datluu-dev/mom-rabbitmq/blob/master/image/server.png">
 </div>
 
 - Client
 <div align="center">
-  <img src="https://github.com/datluu-dev/mom-rabbitmq/blob/master/image/client.pngraw=true">
+  <img src="https://github.com/datluu-dev/mom-rabbitmq/blob/master/image/client.png">
 </div>
