@@ -1,6 +1,7 @@
 import pika
 import sys
 import signal
+import language_check as lc 
 
 class CheckGrammarServer(object):
 	"""docstring for CheckGrammarServer"""
@@ -9,6 +10,7 @@ class CheckGrammarServer(object):
 		self.connection = pika.BlockingConnection(params)
 		self.channel = self.connection.channel()
 		self.channel.queue_declare(queue='mom-soa-queue')
+		self.grammar_checker = lc.LanguageTool('en-US')
 
 		self.start_ch()
 
@@ -21,8 +23,13 @@ class CheckGrammarServer(object):
 		self.channel.start_consuming()
 	
 	def check_grammar(self, word):
-		word = f'{word} after format is {word}ing' 
-		return word
+		matches = self.grammar_checker.check(word)
+		if matches:
+			correction = lc.correct(word, matches)
+			response = f'Did you mean: {correction}'
+		else:
+			response = 'No error found'
+		return response
 
 	def on_request(self, ch, method, props, body):
 		word= body.decode()

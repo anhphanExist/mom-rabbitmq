@@ -1,5 +1,7 @@
 import pika
 import uuid
+import signal
+import sys
 
 # url = 'amqp://vxlrqipo:JBV3wgIMB0ZkNADD5YIQ3I6F6RJ3F4Tp@cougar.rmq.cloudamqp.com/vxlrqipo'
 class CheckGrammarClient(object):
@@ -36,15 +38,38 @@ class CheckGrammarClient(object):
 			self.connection.process_data_events()
 		return self.response
 
+def processing_sentence(checker_client, sentence):
+	print(f'--------------------\n[x] Processing: {sentence}')
+	response = checker_client.call(sentence)
+	response = response.decode()
+	print(f'Got it, result: {response}')
+
+def exit_signal(signal, frame):
+	print('\n[x] Quiting, everything is clean up')
+	sys.exit(0)
 
 def main():
 	checker_client = CheckGrammarClient()
-	sentences = ['Call', 'Next', 'Thank i do not have any issue']
+
+	# Showing test
+	sentences = ['There is some birds on the tree', 
+				'I should been at home today', 
+				'Thank you i does not have any issue']
+	print('[Note] This is test:')
 	for sentence in sentences:
-		print(f'--------------------\n[x] Processing: {sentence}')
-		response = checker_client.call(sentence)
-		response = response.decode()
-		print(f'Got it, result: {response}')
-		
+		processing_sentence(checker_client, sentence)
+	
+	# Input from keyboard
+	print('--------------------\nNow you can type some thing to checkgrammar'\
+		', press Ctr+c then Press Enter to exit')
+	while True:
+		try:
+			sentence = input('Type here: ')
+			processing_sentence(checker_client, sentence)
+		except KeyboardInterrupt:
+			print('\n[x] Quiting, everything is clean up')
+			sys.exit(0)
+
 if __name__ == '__main__':
+	# signal.signal(signal.SIGINT, exit_signal)
 	main()
